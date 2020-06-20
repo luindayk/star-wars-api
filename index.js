@@ -1,6 +1,18 @@
 const app = require('express')();
 const axios = require('axios');
 
+app.use((req, res, next) => {
+    res.header('Content-Type', 'application/json; charset=utf-8');
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', req.header('access-control-request-headers' || '*'));
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+
+    if (req.method === 'OPTIONS') {
+      return res.status(204).send();
+    }
+    next();
+});
+
 const baseURL = 'https://swapi.dev/api/';
 
 const getFilmId = (url) => {
@@ -59,18 +71,6 @@ app.get('/films/:id', async (req, res, next) => {
         console.error(error);
         next(error);
     }
-});
-
-app.use((req, res, next) => {
-  res.header('Content-Type', 'application/json; charset=utf-8');
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', req.header('access-control-request-headers' || '*'));
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(204).send();
-  }
-  next();
 });
 
 app.all('*', async (req, res, next) => {
